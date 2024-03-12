@@ -13,6 +13,7 @@ import com.yuly.noinguin.network.RetrofitService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.http.Query
 
 class LoginActivity : AppCompatActivity() {
 
@@ -29,64 +30,38 @@ class LoginActivity : AppCompatActivity() {
         //둘러보기버튼 클릭 이벤트
         binding.btnBogi.setOnClickListener { startActivity(Intent(this, MainActivity::class.java)) }
         //로그인버튼 클릭 이벤트 : 닷홈서버에 저장
+
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
         binding.btnLogin.setOnClickListener { clickLogin() }
-
-
     }
 
     private fun clickLogin(){
 //        //닷홈서버와 일치여부 확인
         val id = binding.inputLayoutId.editText!!.text.toString()
         val password = binding.inputLayoutPassword.editText!!.text.toString()
-
         val retrofit = RetrofitHelper.getRetrofitInstance()
         val retrofitService = retrofit.create(RetrofitService::class.java)
-        retrofitService.loadUserAccountFromServer(id, password).enqueue(object :Callback<UserAccountItem>{
-            override fun onResponse(
-                call: Call<UserAccountItem>,
-                response: Response<UserAccountItem>
-            ) {
-                val items = response.body()
-
-
-
+        retrofitService.loadUserAccountFromServer(id, password).enqueue(object :Callback<String>{
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                AlertDialog.Builder(this@LoginActivity).setMessage("성공: ${response.body()}").create().show()
             }
 
-            override fun onFailure(call: Call<UserAccountItem>, t: Throwable) {
-                Toast.makeText(this@LoginActivity, "실패: $t", Toast.LENGTH_SHORT).show()
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                AlertDialog.Builder(this@LoginActivity).setMessage("실패:  ${t.message}").create().show()
             }
 
         })
-//
-//        val retrofit = RetrofitHelper.getRetrofitInstance()
-//        val retrofitService = retrofit.create(RetrofitService::class.java)
-//        retrofitService.loadUserAccountFromServer().enqueue(object :Callback<List<UserAccountItem>>{
-//            override fun onResponse(call: Call<List<UserAccountItem>>, response: Response<List<UserAccountItem>>
-//            ) {
-//                itemList.clear()
-//                val items = response.body()
-//                items?.forEach {
-//                    itemList.add(0,it)
-//                }
-//                binding.tvMyId.text = itemList[0].id
-//                //이미지보여주기[DB에는 이미지경로가 "./upload/IMG_xxxx.jpg"로 되어있다.
-//                //안드로이드에서는 서버의 전체주소가 필요하다.
-//                val imgUrl = "http://baechu10.dothome.co.kr/06NoinGuin/${itemList[0].imgUri}"
-//                Glide.with(requireContext()).load(imgUrl).into(binding.iv)
-//
-//
-//            }
-//
-//            override fun onFailure(call: Call<List<UserAccountItem>>, t: Throwable) {
-//                Toast.makeText(requireContext(), "실패$t", Toast.LENGTH_SHORT).show()
-//            }
-//
-//        })
-//
-//
-//
-//
-//    }
+
+
+
+
+
 
 
     }

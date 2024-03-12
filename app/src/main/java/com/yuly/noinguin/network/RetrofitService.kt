@@ -9,10 +9,11 @@ import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.PartMap
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 interface RetrofitService {
 
-   //포스트 멀티파트로 유저계정을 서버에 보내기
+   //회원가입-> 포스트 멀티파트로 유저계정을 서버에 보내기
     @Multipart
     @POST("/06NoinGuin/signup.php")
     fun postUserAccountToServer(@PartMap dataPart:Map<String,String>,
@@ -23,9 +24,10 @@ interface RetrofitService {
 
 
 
-    //사용자입력한id,password줄게. 그걸 이용해서 서버에서 유저계정 GET방식으로 json array로 파싱해
+    //로그인-> 사용자입력한id,password줄게. 그걸 이용해서 서버에서 유저계정 GET방식으로 json array로 파싱해
     @GET("/06NoinGuin/login.php")
-    fun loadUserAccountFromServer(@Query("id")id:String, @Query("password") password:String) : Call<UserAccountItem>
+    fun loadUserAccountFromServer(@Query("id") id:String, @Query("password") password:String)  : Call<String>
+
 
 
 
