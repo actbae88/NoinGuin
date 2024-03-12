@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".fragment.NewsFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:tabMode="fixed"
+        app:tabIndicatorHeight="2dp"
+        app:tabIndicatorColor="#298DF6"
+        app:tabTextColor="#3E3E3E"
+        app:tabSelectedTextColor="#298DF6"
+        />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:saveEnabled="false"/>
+<!--    android:saveEnabled="false"
+프레그먼트가 왔다갔다하는 상태를 기억하는애다. 근데 속도가 너무빠르니까 기억하는애가 키에 해당하는 놈을 잘 못찾는다
+속성은 뷰의 상태를 저장하지 않도록 설정하는 데 사용됩니다.
+기본적으로 안드로이드 시스템은 액티비티나 프래그먼트 등의 뷰의 상태를 저장하고 복원하는 데 도움이 되는 정보를 저장합니다.
+-->
+
+</LinearLayout>

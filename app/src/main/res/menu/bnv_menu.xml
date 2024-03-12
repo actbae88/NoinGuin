@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/bnv_icon_news" android:title="뉴스" android:icon="@drawable/bnv_news" />
+    <item android:id="@+id/bnv_icon_job" android:title="일자리" android:icon="@drawable/bnv_job" />
+    <item android:id="@+id/bnv_icon_jjim" android:title="일자리 찜" android:icon="@drawable/bnv_jjim" />
+    <item android:id="@+id/bnv_icon_my" android:title="내꺼" android:icon="@drawable/bnv_my" />
+</menu>

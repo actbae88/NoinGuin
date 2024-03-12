@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <external-path
+        name="external_public"
+        path="."/>
+<!--    외부 공용 파일에 대한 경로 정의.
+앱이 외부 저장소의 공용 디렉토리에 저장된 파일에 액세스할 때 사용됨.
+다른 앱이나 사용자에게 공개됨
+path: 실제 공용 파일이 저장될 디렉토리를 지정-->
+
+    <external-files-path
+        name="external_app"
+        path="."/>
+<!--외부 파일에 대한 경로를 정의.
+앱의 내부 저장소 외부에 있는 파일에 액세스할 때 사용
+ 예를 들어, 앱이 생성한 파일이나 앱이 사용하는 다운로드된 파일과 같은 경우에 사용
+ path: 실제 파일이 저장될 디렉토리를 지정-->
+
+    <external-media-path
+        name="external_media"
+        path="."/>
+<!--    외부 미디어에 대한 경로를 정의.
+앱이 외부 저장소에 저장된 미디어 파일에 액세스할 때 사용.
+예를 들어, 앨범에서 이미지나 오디오 파일을 가져오는 경우
+path: 실제 미디어 파일이 저장될 디렉토리를 지정-->
+
+
+
+</paths>

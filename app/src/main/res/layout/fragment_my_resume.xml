@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    tools:context=".fragment.MyResumeFragment">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/iv"
+        android:layout_width="120dp"
+        android:layout_height="160dp"
+        android:background="@drawable/bg_shape"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="48dp"
+        android:padding="4dp"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/iv"
+        android:text="사진 선택"
+        android:textStyle="bold"
+        style="@style/Widget.MaterialComponents.Button"
+        android:backgroundTint="#5780F1"
+        android:layout_marginLeft="14dp"/>
+
+
+
+    <TableLayout
+        android:id="@+id/table_layout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/iv"
+        android:stretchColumns="1">
+
+        <TableRow>
+            <TextView
+                android:text="이   름 :"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_marginRight="12dp"
+                android:background="#F3E6E6"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_name"
+                android:inputType="text"
+                android:hint="예 ) 홍 길 동"
+                />
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="생  년  \n월  일 :"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_marginRight="12dp"
+                android:background="#F3E6E6"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_age"
+                android:inputType="number"
+                android:hint="예 ) 1988.04.12"
+                android:layout_gravity="center_vertical"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="이메일 :"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_marginRight="12dp"
+                android:background="#F3E6E6"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_email"
+                android:inputType="text"
+                android:hint="예 ) baechu10@hanmail.net"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="주   소 :"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_marginRight="12dp"
+                android:background="#F3E6E6"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_address"
+                android:inputType="text"
+                android:hint="예 ) 서울시 성동구 무학로2길 24. 3층"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="핸드폰  \n번   호 :"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_marginRight="12dp"
+                android:background="#F3E6E6"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_phone"
+                android:inputType="number"
+                android:hint="예 ) 010-8282-8282"
+                android:layout_gravity="center_vertical"/>
+        </TableRow>
+
+
+    </TableLayout>
+
+    <View
+        android:id="@+id/v"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/table_layout1"
+        android:background="#323232"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="24dp"/>
+
+
+
+    <TableLayout
+        android:id="@+id/table_layout2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/v">
+        <TableRow>
+            <TextView
+                android:text="학      력 : "
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:background="#F3E6E6"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_school1"
+                android:inputType="text"
+                android:hint="예 ) 00고등학교 졸업"
+                android:layout_gravity="center_vertical"/>
+        </TableRow>
+
+        <TableRow>
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_school2"
+                android:inputType="text"
+                android:hint="예 ) 00대학교 졸업"
+                android:layout_span="2"
+                android:layout_marginLeft="74dp"
+                android:layout_gravity="center_vertical"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="경     력 : "
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:background="#F3E6E6"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_jpb1"
+                android:inputType="text"
+                android:hint="예 ) 00전자 영업부서 2년 근무"
+                android:layout_gravity="center_vertical"/>
+        </TableRow>
+
+        <TableRow>
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_jpb2"
+                android:inputType="text"
+                android:hint="예 ) 00시설관리공단 3년 근무"
+                android:layout_span="2"
+                android:layout_marginLeft="74dp"
+                android:layout_gravity="center_vertical"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="자 격 증 : "
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:background="#F3E6E6"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_jjeung1"
+                android:inputType="text"
+                android:hint="예 ) 컴퓨터 활용능력 2급"
+                android:layout_gravity="center_vertical"/>
+        </TableRow>
+
+        <TableRow>
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_jjeung2"
+                android:inputType="text"
+                android:hint="예 ) 정보처리기사 자격증"
+                android:layout_span="2"
+                android:layout_marginLeft="74dp"
+                android:layout_gravity="center_vertical"/>
+        </TableRow>
+
+        <TableRow>
+            <TextView
+                android:text="자기소개 :"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:background="#F3E6E6"/>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_sogae"
+                android:inputType="text"
+                android:hint="예 ) 안녕하세요. 저는 열정적인 소프트웨어 엔지니어로, "
+                android:layout_gravity="center_vertical"/>
+        </TableRow>
+
+    </TableLayout>
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.Button"
+            android:backgroundTint="#B93FA8F6"
+            android:text="저    장"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_below="@id/table_layout2"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="60dp"/>
+
+
+
+    </RelativeLayout>
+</ScrollView>
