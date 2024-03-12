@@ -2,6 +2,7 @@ package com.yuly.noinguin.network
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 
 class RetrofitHelper {
 
@@ -10,10 +11,10 @@ class RetrofitHelper {
 
             val builder = Retrofit.Builder()
             builder.baseUrl("http://baechu10.dothome.co.kr")
+            builder.addConverterFactory(ScalarsConverterFactory.create())
             builder.addConverterFactory(GsonConverterFactory.create())
-            val retrofit:Retrofit = builder.build()
 
-            return retrofit
+            return builder.build()
         }
     }
 }

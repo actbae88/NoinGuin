@@ -8,7 +8,7 @@
     tools:context=".fragment.MyInformationFragment">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
 
     <ImageView
@@ -33,7 +33,7 @@
         android:id="@+id/tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="내 아이디(변경 불가) : "
+        android:text="내 아이디(변경 불가) :   "
         android:textSize="24sp"
         android:textColor="@color/black"
         android:layout_below="@id/iv"
@@ -90,9 +90,13 @@
             android:layout_height="wrap_content"
             style="@style/Widget.MaterialComponents.Button"
             android:backgroundTint="#3378FB"
+            android:layout_centerHorizontal="true"
             android:text="저  장"
-            android:layout_marginLeft="24dp"
-            android:layout_alignParentBottom="true"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginTop="80dp"
+            android:layout_marginBottom="80dp"
+            android:layout_below="@id/input_layout_password_confirm"
             />
 
 
