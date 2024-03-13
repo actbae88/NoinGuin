@@ -21,6 +21,7 @@ import androidx.core.view.size
 import androidx.loader.content.CursorLoader
 import com.bumptech.glide.Glide
 import com.yuly.noinguin.R
+import com.yuly.noinguin.data.UserAccountItem
 import com.yuly.noinguin.databinding.ActivitySignupBinding
 import com.yuly.noinguin.network.RetrofitHelper
 import com.yuly.noinguin.network.RetrofitService
@@ -62,7 +63,7 @@ class SignupActivity : AppCompatActivity() {
 
 
 
-        
+
 
 
 

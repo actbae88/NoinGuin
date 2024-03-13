@@ -5,4 +5,9 @@ data class UserAccountItem(
     var id:String,
     var password:String,
     var age:String,
-    var imgUri:String)
+    var imgFile:String)
+
+data class LoginResponse(
+    var rowNum:Int,
+    var account:UserAccountItem
+)
