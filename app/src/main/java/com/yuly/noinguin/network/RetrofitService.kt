@@ -25,6 +25,12 @@ interface RetrofitService {
 
 
 
+    //회원가입때 입력된아이디를 서버아이디들과 중복확인하기
+    @FormUrlEncoded
+    @POST("/06NoinGuin/idconfirm.php")
+    fun confirmIdFromServer(@Field("id") id:String) : Call<String>
+
+
 
 
     //로그인-> 사용자입력한id,password줄게. 그걸 이용해서 서버에서 유저계정 POST방식으로 json array로 파싱해

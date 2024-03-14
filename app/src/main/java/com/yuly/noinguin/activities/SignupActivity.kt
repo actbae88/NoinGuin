@@ -1,6 +1,7 @@
 package com.yuly.noinguin.activities
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
@@ -31,6 +32,9 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.POST
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -111,7 +115,7 @@ class SignupActivity : AppCompatActivity() {
         //fileToImgUri가 절대경로이다. 그래서 따로 절대경로만들필요없음..
         //fileToImgUri--> content://abc/external_public/Pictures/IMG_20240312095750.jpg
         //왜 abc가 들어갔을까? 그리고 사진도 찍기전에 파일명이 정해지네? 즉 사진을 안찍어도 파일의경로가 만들어진다?
-        AlertDialog.Builder(this).setMessage(fileToImgUri.toString()).create().show()
+        AlertDialog.Builder(this).setMessage(clickedFileName).create().show()
 
         resultLauncher1.launch(intent)
 
@@ -200,11 +204,30 @@ class SignupActivity : AppCompatActivity() {
 
 
     private fun idConfirm(){
-        //서버에 아이디중복확인
-        //id = binding.inputLayoutId.editText!!.text.toString()
-        Toast.makeText(this, "$id", Toast.LENGTH_SHORT).show()
 
-    }
+        //서버에 아이디중복확인
+        id = binding.inputLayoutId.editText!!.text.toString()
+
+        val retrofitService = RetrofitHelper.getRetrofitInstance().create(RetrofitService::class.java)
+        retrofitService.confirmIdFromServer(id).enqueue(object : Callback<String>{
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.body()=="1"){
+                    Toast.makeText(this@SignupActivity, "중복된 아이디가 있습니다ㅠㅠ\n새로운 아이디를 입력하세요.", Toast.LENGTH_SHORT).show()
+                }else if (id == ""){
+                    Toast.makeText(this@SignupActivity, "아이디를 입력해주세요.", Toast.LENGTH_SHORT).show()
+                }else{
+                    Toast.makeText(this@SignupActivity, "사용 가능한 아이디입니다^^", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                Toast.makeText(this@SignupActivity, "$t", Toast.LENGTH_SHORT).show()
+            }
+        }) //아이디중복확인 레트로핏서비스
+
+
+        
+    }//idConfirm
 
 
     //-------------------------------------------
@@ -217,25 +240,57 @@ class SignupActivity : AppCompatActivity() {
 
         //2.아이디
         id = binding.inputLayoutId.editText!!.text.toString()
-        if(id.equals("")){
-            Toast.makeText(this, "아이디는 필수 입력사항 입니다.", Toast.LENGTH_SHORT).show()
-        }else id=binding.inputLayoutId.editText!!.text.toString()
-        //3.비밀번호 준비완료 - password
-        password = binding.inputLayoutPassword.editText!!.text.toString()
-        var passwordC= binding.inputLayoutPasswordConfirm.editText!!.text.toString()
-        if (password!=passwordC) {
-            Toast.makeText(this, "비밀번호를 다시 확인해주세요. 서로 달라요", Toast.LENGTH_SHORT).show()
-        }else if (password.equals("")||passwordC.equals("")){
-            Toast.makeText(this, "비밀번호는 필수 입력사항 입니다.", Toast.LENGTH_SHORT).show()
-        }
-        //4.나이대:준비완료 - spinnerItem
+        val retrofitService = RetrofitHelper.getRetrofitInstance().create(RetrofitService::class.java)
+        retrofitService.confirmIdFromServer(id).enqueue(object : Callback<String>{
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.body()=="1"){
+                    Toast.makeText(this@SignupActivity, "중복된 아이디가 있습니다ㅠㅠ\n새로운 아이디를 입력하세요.", Toast.LENGTH_SHORT).show()
+                }else{ //서버에 중복된 아이디가 없을때
 
-        if (id.isNotEmpty() && password.equals(passwordC) && password!="" && passwordC!="" )
-            sendServer()
+                    if(id.equals("")){
+                        Toast.makeText(this@SignupActivity, "아이디는 필수 입력사항 입니다.", Toast.LENGTH_SHORT).show()
+                    }else id=binding.inputLayoutId.editText!!.text.toString()
+                    //3.비밀번호 준비완료 - password
+                    password = binding.inputLayoutPassword.editText!!.text.toString()
+                    var passwordC= binding.inputLayoutPasswordConfirm.editText!!.text.toString()
+                    if (password!=passwordC) {
+                        Toast.makeText(this@SignupActivity, "비밀번호를 다시 확인해주세요. 서로 달라요", Toast.LENGTH_SHORT).show()
+                    }else if (password.equals("")||passwordC.equals("")){
+                        Toast.makeText(this@SignupActivity, "비밀번호는 필수 입력사항 입니다.", Toast.LENGTH_SHORT).show()
+                    }
+                    //4.나이대:준비완료 - spinnerItem
+
+                    if (id.isNotEmpty() && password.equals(passwordC) && password!="" && passwordC!="" ){
+                        //모든게 준비완료 됬으니 서버에 보내고, 폰환경설정에도 보내자.
+                        Toast.makeText(this@SignupActivity, "회원가입을 축하드립니다^_^", Toast.LENGTH_SHORT).show()
+                        sendPreferences()
+                        sendServer()
+                        startActivity(Intent(this@SignupActivity,LoginActivity::class.java))
+                    }
+
+
+                }
+            }//서어베 중복된 아이디 없을때
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                Toast.makeText(this@SignupActivity, "$t", Toast.LENGTH_SHORT).show()
+            }
+        }) //아이디중복확인 레트로핏서비스
+
+
+
 
 
     }//btnOk method..
 
+
+    private fun sendPreferences(){
+        val preferences = getSharedPreferences("account", MODE_PRIVATE)
+        val editor = preferences.edit()
+        editor.putString("id",id)
+        editor.putString("password", password)
+        editor.apply()
+    }
 
     private fun sendServer(){
 
@@ -263,7 +318,9 @@ class SignupActivity : AppCompatActivity() {
             override fun onFailure(call: Call<String>, t: Throwable) {
                 AlertDialog.Builder(this@SignupActivity).setMessage("실패이유:$t").create().show()
             }
-        })
+        })//서버에 계정넘기기
+
+
     }
 
 }

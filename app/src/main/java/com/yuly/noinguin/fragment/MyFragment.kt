@@ -12,6 +12,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.yuly.noinguin.R
 import com.yuly.noinguin.adapter.MyPagerAdapter
 import com.yuly.noinguin.databinding.FragmentMyBinding
+import com.yuly.noinguin.network.G
 
 
 class MyFragment : Fragment() {
@@ -53,7 +54,15 @@ class MyFragment : Fragment() {
 
 
 
-        getUserAccount()
+        id= G.userAccountItem?.id.toString()
+        password = G.userAccountItem?.password.toString()
+        imgFile = G.userAccountItem?.imgFile.toString()
+
+       // AlertDialog.Builder(context).setMessage(id+password+imgFile).create().show()
+
+
+
+
 
 
     }//온크리
@@ -62,16 +71,6 @@ class MyFragment : Fragment() {
 
 
 
-    //메인액티에서 보낸 번들꾸러미의 아규먼트들 꺼내보장
-    private fun getUserAccount(){
-        id = arguments?.getString("id").toString()
-        password = arguments?.getString("password").toString()
-        imgFile = arguments?.getString("imgFile").toString()
-
-        AlertDialog.Builder(requireContext()).setMessage(id+password+imgFile).create().show()
-
-
-    }
 
 
 }
