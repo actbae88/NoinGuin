@@ -1,10 +1,11 @@
 package com.yuly.noinguin.fragment
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.database.Cursor
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -13,25 +14,19 @@ import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnClickListener
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultCallback
-import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.graphics.drawable.toBitmap
 import androidx.loader.content.CursorLoader
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.transition.Transition
-import com.yuly.noinguin.R
-import com.yuly.noinguin.data.UserAccountItem
+import com.yuly.noinguin.data.MyInfomationDataChange
 import com.yuly.noinguin.databinding.FragmentMyInformationBinding
 import com.yuly.noinguin.network.G
 import com.yuly.noinguin.network.RetrofitHelper
 import com.yuly.noinguin.network.RetrofitService
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -47,6 +42,9 @@ class MyInformationFragment : Fragment() {
     lateinit var id:String
     lateinit var password:String
     lateinit var imgFile:String
+    private var isImageChanged:Boolean = false
+    private var pwPerfect:Boolean = false
+
 
 
 
@@ -75,36 +73,48 @@ class MyInformationFragment : Fragment() {
 
         //사진변경 버튼 클릭 이벤트처리
         binding.btnIvChange.setOnClickListener { changePhoto() }
+        binding.btnPwOk.setOnClickListener{ confirmPassword(pwPerfect) }
 
-        binding.btnOk.setOnClickListener { saveUserAccount() }
+        binding.btnOk.setOnClickListener { clickSaveBtn() }
 
 
-    }//온크리
+    }//온뷰크리에이티드
 
 
 
     private fun changePhoto(){
+        val preferences = activity?.getSharedPreferences("account",Context.MODE_PRIVATE)
+        if (preferences?.contains("id")==true){//프리퍼런스에 아이디있어?
+            val intent = if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.TIRAMISU) Intent(MediaStore.ACTION_PICK_IMAGES) else Intent(Intent.ACTION_OPEN_DOCUMENT).setType("image/*")
+            //AlertDialog.Builder(requireContext()).setMessage(imgFile).create().show()
+            resultLauncher.launch(intent)
+        }else{
+            Toast.makeText(requireContext(), "회원가입 또는 로그인하셔야 사진변경이 가능합니다.", Toast.LENGTH_SHORT).show()
+        }
 
-        //쉐어드프리퍼런스에 account 없으면 토스트띄우기 "회원가입 또는 로그인을 하셔야 합니다."
+        //저장버튼 클릭시, 바뀐 imgRealPath를 서버로 UPDATE 잊지말자^^
 
-        val intent = if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.TIRAMISU) Intent(MediaStore.ACTION_PICK_IMAGES) else Intent(Intent.ACTION_OPEN_DOCUMENT).setType("image/*")
-        //AlertDialog.Builder(requireContext()).setMessage(imgFile).create().show()
-        resultLauncher.launch(intent)
+    }//changePhoto()
 
-        //바뀐 imgRealPath를 서버로 UPDATE하자
 
-    }
 
     //멤버변수에..부릉이 리절트런처
     val resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-        val uri: Uri? = it.data?.data
-        uri?.let {
-            Glide.with(requireContext()).load(uri).into(binding.iv)
-            //binding.tv.text = uri.toString() -- content://media/picker/0/com/android/providers.media...절대경로로 바꿔야함!!
-            imgRealPath = getRealPathFromUri(uri)
-            //binding.tv.text = imgRealPath --/storage/emulated/0/Android/data/com/yuly.noinguin/cache/1000..jpg
+        if (it.data?.data!=null){ //인텐트가 가져온 사진데이터가 있으면..
+            val uri: Uri? = it.data?.data
+            uri?.let {
+                Glide.with(requireContext()).load(uri).into(binding.iv)
+                //binding.tv.text = uri.toString() -- content://media/picker/0/com/android/providers.media...절대경로로 바꿔야함!!
+                imgRealPath = getRealPathFromUri(uri)
+                //binding.tv.text = imgRealPath --/storage/emulated/0/Android/data/com/yuly.noinguin/cache/1000..jpg
+                isImageChanged = true //이미지 바꼈어!!
+            }
+        }else{//인텐트가 액션픽이미지는했는데 사용자가 암껏도선택안하고 되돌아오면
+            it.data?.data = null
+            isImageChanged = false //이미지 안바꼈어!!
         }
     }//리절트런처
+
 
     //멤버변수에 절대경로변수
     var imgRealPath:String? = null
@@ -132,23 +142,49 @@ class MyInformationFragment : Fragment() {
         outputStream.close()
         return file.absolutePath
 
-    }//이미지 리얼패스얻기
+    }//getReaPathFromUri()
 
 
 
 
-    //채팅--로그인화면
-    private fun saveUserAccount(){
-//        val imageUrl1 = "http://baechu10.dothome.co.kr/06NoinGuin/${G.userAccountItem?.imgFile}"
-//        //회원가입 또는 로그인을 하지않은 상황이면,G에 null이니..
-//        if (imgFile.equals(null)){
-//            Toast.makeText(requireContext(), "회원가입 또는 로그인을 해주세요", Toast.LENGTH_SHORT).show()
-//        }else if (imgFile.equals())
-//            binding.iv.drawable.toString()
-//            //imgFile : ./signupimg/IMG_2024~~.jpg
 
-        AlertDialog.Builder(requireContext()).setMessage(binding.iv.drawable.toString()).create().show()
-        //binding.iv.drawable.toString()
+    //------------------------------------------------
+
+    //pw확인 버튼클릭시 --비밀번호 컨펌해줘도 되겠닝? 확인해보장!!
+    private fun confirmPassword(pwPerfect: Boolean) : Boolean{
+        val etPassword = binding.inputLayoutPassword.editText!!.text.toString()
+        val etPasswordC = binding.inputLayoutPasswordConfirm.editText!!.text.toString()
+        val preferences = activity?.getSharedPreferences("account",Context.MODE_PRIVATE)
+
+        //회원이 맞는지 확인하기
+        if (preferences?.contains("id") == true){
+            if (etPassword == etPasswordC){
+                val savedPassword = preferences.getString("password","")
+                if (etPassword == savedPassword){
+                    Toast.makeText(requireContext(), "현재 ${id}님의 비밀번호와 같습니다.", Toast.LENGTH_SHORT).show()
+                    this.pwPerfect = false
+                    return false
+
+                }else if (etPassword=="" && etPasswordC==""){
+                    Toast.makeText(requireContext(), "아무것도 입력하지 않았습니다.", Toast.LENGTH_SHORT).show()
+                    this.pwPerfect = false
+                    return false
+                }else{
+                    Toast.makeText(requireContext(), "비밀번호 변경 가능. 저장버튼을 눌러주세요.", Toast.LENGTH_SHORT).show()
+                    this.pwPerfect = true
+                    return true //이 상황에서만 컨펌페스워드 메소드를 true시킨다.
+                }
+            }else{
+                Toast.makeText(requireContext(), "비밀번호를 다시 확인해주세요. 서로 다릅니다.", Toast.LENGTH_SHORT).show()
+                this.pwPerfect = false
+                return false
+            }
+        }else{
+            Toast.makeText(requireContext(), "회원이 아니세요. 회원가입 또는 로그인 후 이용해주세요", Toast.LENGTH_SHORT).show()
+            this.pwPerfect = false
+            return false
+
+        }
 
     }
 
@@ -156,5 +192,140 @@ class MyInformationFragment : Fragment() {
 
 
 
+    private fun clickSaveBtn(){
+        val preferences = activity?.getSharedPreferences("account",Context.MODE_PRIVATE)
+        if (preferences?.contains("id") == true){
+            saveUserAccount()
+        }else{
+            Toast.makeText(requireContext(), "기존회원이 아닙니다.\n회원가입 또는 로그인을 진행해주세요.", Toast.LENGTH_SHORT).show()
+        }
+    }
 
-}
+
+
+
+    private fun saveUserAccount(){//기존회원이 확실한 상황
+        //val imageUrl1 = "http://baechu10.dothome.co.kr/06NoinGuin/${G.userAccountItem?.imgFile}"
+        val newPassword = binding.inputLayoutPassword.editText!!.text.toString() // 입력한 새 비밀번호
+
+
+            //1. 이미지체인지됬고 pw퍼펙트확인 true인 상황, 이미지,비번 둘다 서버,프리퍼런스,G 작업
+        if (isImageChanged==true && pwPerfect==true){
+            changeImgFile()
+            if (confirmPassword(pwPerfect)) {
+                changePassword(newPassword)
+            }
+
+        }else if (isImageChanged==true && pwPerfect==false){
+            //2. 이미지체인지됬고, pw퍼펙트확인 false인 상황, 이미지만 서버,프리퍼런스,G 작업
+            changeImgFile()
+        }else if (isImageChanged==false && pwPerfect==true){
+            //3. 이미지체인지 false이고, pw퍼펙트확인 true인 상황, 비번만 서버,프리퍼런스,G 작업
+            if (confirmPassword(pwPerfect)) {
+                changePassword(newPassword)
+            }
+        }else if (isImageChanged==false && pwPerfect==false){
+            //4. 이미지,비번 둘다 안바꼈어-- 토스트 - 변경사항이 없습니다.
+            Toast.makeText(requireContext(), "변경사항이 없습니다.", Toast.LENGTH_SHORT).show()
+        }
+
+
+    }//saveUserAccount()
+
+
+
+
+
+
+
+    private fun changeImgFile(){
+
+        //1.서버에 새로운 이미지 업데이트 요청
+        val retrofitService = RetrofitHelper.getRetrofitInstance().create(RetrofitService::class.java)
+        val sharedPreferences= activity?.getSharedPreferences("account",Context.MODE_PRIVATE)
+        val id: String? = sharedPreferences?.getString("id","")
+        val dataPart : MutableMap<String,String> = mutableMapOf()
+
+
+        //dataPart에 담기
+        if (id.isNullOrEmpty()) {
+            Toast.makeText(requireContext(), "사용자 id를 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+        } else{
+            dataPart["id"] = id.toString()
+        }
+
+        //filePart에 담기
+        val filePart : MultipartBody.Part? = imgRealPath.let {
+            val file = File(it)
+            val requestBody = RequestBody.create(MediaType.parse("image/*"),file)
+            MultipartBody.Part.createFormData("img1",file.name,requestBody)
+        }
+
+        retrofitService.updateImage(dataPart,filePart).enqueue(object : Callback<MyInfomationDataChange>{
+            override fun onResponse(
+                call: Call<MyInfomationDataChange>,
+                response: Response<MyInfomationDataChange>
+            ) {
+                val result = response.body()
+                if (result?.rowNum!! > 0){
+                    sharedPreferences?.edit()?.putString("imgFile", result.newData)?.apply()
+                    G.userAccountItem?.imgFile = result.newData
+                    AlertDialog.Builder(requireContext()).setMessage("프로필사진이 변경되었습니다.").create().show()
+                }else{
+                    AlertDialog.Builder(requireContext()).setMessage("${result.rowNum}: 못찾겠다").create().show()
+                }
+            }
+
+            override fun onFailure(call: Call<MyInfomationDataChange>, t: Throwable) {
+                Toast.makeText(requireContext(), "레트로핏 응답 없음 $t", Toast.LENGTH_SHORT).show()
+            }
+        })
+
+
+
+
+
+    }//changeImgFile()
+
+
+
+    private fun changePassword(newPassword:String){
+
+
+
+
+        //1.서버에 새로운 이미지 업데이트 요청
+        val retrofitService = RetrofitHelper.getRetrofitInstance().create(RetrofitService::class.java)
+        val sharedPreferences= activity?.getSharedPreferences("account",Context.MODE_PRIVATE)
+        val id: String? = sharedPreferences?.getString("id","")
+
+
+        retrofitService.updatePassword(id!!, newPassword).enqueue(object : Callback<MyInfomationDataChange>{
+            override fun onResponse(
+                call: Call<MyInfomationDataChange>,
+                response: Response<MyInfomationDataChange>
+            ) {
+                val result = response.body()
+                AlertDialog.Builder(requireContext()).setMessage("${result?.rowNum}     ${result?.newData}").create().show()
+            }
+
+            override fun onFailure(call: Call<MyInfomationDataChange>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+
+        })
+
+
+
+
+    }//changePassword()
+
+
+
+}//fragment class..
+
+
+
+
+
+

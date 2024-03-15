@@ -1,7 +1,7 @@
 package com.yuly.noinguin.network
 
 import com.yuly.noinguin.data.LoginResponse
-import com.yuly.noinguin.data.UserAccountItem
+import com.yuly.noinguin.data.MyInfomationDataChange
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.Field
@@ -20,7 +20,7 @@ interface RetrofitService {
     @Multipart
     @POST("/06NoinGuin/signup.php")
     fun postUserAccountToServer(@PartMap dataPart:Map<String,String>,
-                                @Part filePart: MultipartBody.Part? ) : Call<String>
+                                @Part filePart: MultipartBody.Part? ) : Call<LoginResponse>
 
 
 
@@ -38,6 +38,27 @@ interface RetrofitService {
     @FormUrlEncoded
     @POST("/06NoinGuin/login.php")
     fun loadUserAccountFromServer(@Field("id") id:String, @Field("password") password:String)  : Call<LoginResponse>
+
+
+
+    //MyInformationFragment에서 이미지변경시 서버 업데이트 요청해줘
+    //파일은 일반데이터가 아니다. 물고기 아이스박스포장
+    @Multipart
+    @POST("/06NoinGuin/updateImage.php")
+    fun updateImage(@PartMap dataPart: Map<String, String>,
+                    @Part filePart: MultipartBody.Part?) : Call<MyInfomationDataChange>
+    //MultipartBody.Part라는 객체를 만들어서 보내줄게.
+    //string은 key=value 이런식으로 담아보내면된다.  header에는 인증키같은거 추가적인거 넣는곳이다.
+
+
+
+
+    //MyInformationFragment에서 비밀번호 변경시 서버 업데이트 요청해줘
+    @FormUrlEncoded
+    @POST("/06NoinGuin/updatePassword.php")
+    fun updatePassword(@Field("id") id:String, @Field("password") password:String) : Call<MyInfomationDataChange>
+
+
 
 
 

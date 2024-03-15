@@ -11,3 +11,8 @@ data class LoginResponse(
     var rowNum:Int,
     var account:UserAccountItem
 )
+
+data class MyInfomationDataChange(
+    var rowNum: Int,
+    var newData: String
+)

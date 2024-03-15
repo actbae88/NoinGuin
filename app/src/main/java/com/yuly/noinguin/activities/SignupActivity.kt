@@ -1,5 +1,6 @@
 package com.yuly.noinguin.activities
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.database.Cursor
@@ -22,6 +23,7 @@ import androidx.core.view.size
 import androidx.loader.content.CursorLoader
 import com.bumptech.glide.Glide
 import com.yuly.noinguin.R
+import com.yuly.noinguin.data.LoginResponse
 import com.yuly.noinguin.data.UserAccountItem
 import com.yuly.noinguin.databinding.ActivitySignupBinding
 import com.yuly.noinguin.network.RetrofitHelper
@@ -297,28 +299,42 @@ class SignupActivity : AppCompatActivity() {
         val retrofit = RetrofitHelper.getRetrofitInstance()
         val retrofitService = retrofit.create(RetrofitService::class.java)
 
-        val dataPart:MutableMap<String,String> = mutableMapOf()
-        dataPart["id"] = id
-        dataPart["password"] = password
-        dataPart["age"] = spinnerItem as String
+        val dataPart : MutableMap<String,String> = mutableMapOf()
+            dataPart["id"] = id
+            dataPart["password"] = password
+            dataPart["age"] = spinnerItem as String
 
 
-        val filePart: MultipartBody.Part? = clickedFileName.let {
+        val filePart : MultipartBody.Part? = clickedFileName.let {
             val file = File(it)
             val requestBody = RequestBody.create(MediaType.parse("image/*"),file)
             MultipartBody.Part.createFormData("img1",file.name,requestBody)
         }
         //이미지캡처 - /storage/emulated/0/Pictures/IMG_20240312150327.jpg
 
-        retrofitService.postUserAccountToServer(dataPart,filePart).enqueue(object : Callback<String>{
-            override fun onResponse(call: Call<String>, response: Response<String>) {
+        retrofitService.postUserAccountToServer(dataPart,filePart).enqueue(object : Callback<LoginResponse>{
+            override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
+                val preferencesEditor = getSharedPreferences("account",Context.MODE_PRIVATE).edit()
+                val userAccount = response.body()
+                preferencesEditor.putString("id",userAccount?.account?.id )
+                preferencesEditor.putString("password",userAccount?.account?.password)
+                preferencesEditor.putString("imgFile", userAccount?.account?.imgFile)
+                preferencesEditor.apply()
+
                 AlertDialog.Builder(this@SignupActivity).setMessage(clickedFileName).create().show()
-               startActivity(Intent(this@SignupActivity,LoginActivity::class.java))
+//               startActivity(Intent(this@SignupActivity,LoginActivity::class.java))
             }
-            override fun onFailure(call: Call<String>, t: Throwable) {
+
+            override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                 AlertDialog.Builder(this@SignupActivity).setMessage("실패이유:$t").create().show()
             }
-        })//서버에 계정넘기기
+
+        })
+
+
+
+
+
 
 
     }
